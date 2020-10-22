@@ -268,84 +268,61 @@ const huntData = {
   },
 };
 
-const largeWeapon = document.getElementById('large-weapon');
-const mediumWeapon = document.getElementById('medium-weapon');
-const smallWeapon = document.getElementById('small-weapon');
-
-let randomLargeWeapon;
-let randomMediumWeapon;
-let randomSmallWeapon;
-
-// The number of weapon classes - large, medium, and small
-const numberOfClasses = 3;
-
+const kitContainer = document.querySelector('.kit-container');
 const rollButton = document.getElementById('random-button');
 
 function getRandomItem(itemArray) {
   return Math.floor(Math.random() * itemArray.length);
 }
 
-function getLargeWeapon() {
-  randomLargeWeapon =
-    huntData.weapons.large[getRandomItem(huntData.weapons.large)].name;
-}
-
-function getMediumWeapon() {
-  randomMediumWeapon =
-    huntData.weapons.medium[getRandomItem(huntData.weapons.medium)].name;
-}
-
-function getSmallWeapon() {
-  randomSmallWeapon =
-    huntData.weapons.small[getRandomItem(huntData.weapons.small)].name;
-}
-
-function displayLoadout() {
-  largeWeapon.textContent = `LARGE WEAPON: ${randomLargeWeapon}`;
-  mediumWeapon.textContent = `MEDIUM WEAPON: ${randomMediumWeapon}`;
-  smallWeapon.textContent = `SMALL WEAPON: ${randomSmallWeapon}`;
+function getWeapon(size) {
+  if (size === 1) {
+    kitContainer.innerHTML += `<div>
+        <h2>Small Weapon</h2>
+        ${huntData.weapons.small[getRandomItem(huntData.weapons.small)].name}
+      </div>`;
+  } else if (size === 2) {
+    kitContainer.innerHTML += `<div>
+        <h2>Medium Weapon</h2>
+        ${huntData.weapons.medium[getRandomItem(huntData.weapons.medium)].name}
+      </div>`;
+  } else if (size === 3) {
+    kitContainer.innerHTML += `<div>
+        <h2>Large Weapon</h2>
+        ${huntData.weapons.large[getRandomItem(huntData.weapons.large)].name}
+      </div>`;
+  }
 }
 
 function getWeapons() {
-  const randomClass = Math.ceil(Math.random() * numberOfClasses);
-  let nextWeapon = 0;
+  // Clear the kitContainer when an new roll is attempted
+  kitContainer.innerHTML = '';
 
-  // Large weapon point value = 3
-  if (randomClass === 3) {
-    getLargeWeapon();
-    getSmallWeapon();
-  }
+  // the standard number of points for a loadout
+  let currentPoints = 4;
 
-  // Medium weapon point value = 3
-  if (randomClass === 2) {
-    getMediumWeapon();
+  // The initial number of weapon types is 3 - large, medium, and small
+  let weaponTypes = 3;
 
-    nextWeapon = Math.ceil(Math.random() * 2);
-    if (nextWeapon === 2) {
-      getMediumWeapon();
-    } else {
-      getSmallWeapon();
-      getSmallWeapon();
+  // Initialize variable for random number for weapon type
+  let randomType = 0;
+
+  while (currentPoints > 0) {
+    // Get a random number from 1 - 3 to choose the type
+    // 1 - Small Weapon, 2 - Medium Weapon, 3 - Large Weapon
+    randomType = Math.ceil(Math.random() * weaponTypes);
+    console.log(randomType);
+
+    if (currentPoints < randomType) {
+      continue;
     }
-  }
 
-  // Small weapon point value = 1
-  if (randomClass === 1) {
-    getSmallWeapon();
-
-    nextWeapon = Math.ceil(Math.random() * 3);
-    if (nextWeapon === 2) {
-      getLargeWeapon();
-    } else {
-      getSmallWeapon();
-      getSmallWeapon();
-    }
+    getWeapon(randomType);
+    currentPoints -= randomType;
+    console.log(currentPoints);
   }
 }
 
 rollButton.addEventListener('click', () => {
-  getLargeWeapon();
-  getMediumWeapon();
-  getSmallWeapon();
-  displayLoadout();
+  getWeapons();
 });
