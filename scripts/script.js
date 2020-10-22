@@ -271,10 +271,12 @@ const huntData = {
 const kitContainer = document.querySelector('.kit-container');
 const rollButton = document.getElementById('random-button');
 
+// Get a random item from the object array
 function getRandomItem(itemArray) {
   return Math.floor(Math.random() * itemArray.length);
 }
 
+// Display the weapon based on the random number
 function getWeapon(size) {
   if (size === 1) {
     kitContainer.innerHTML += `<div>
@@ -306,20 +308,29 @@ function getWeapons() {
 
   // Initialize variable for random number for weapon type
   let randomType = 0;
+  // Initialize variable to track the previously drawn weapon type
+  let previousType = 0;
 
   while (currentPoints > 0) {
     // Get a random number from 1 - 3 to choose the type
     // 1 - Small Weapon, 2 - Medium Weapon, 3 - Large Weapon
     randomType = Math.ceil(Math.random() * weaponTypes);
-    console.log(randomType);
+    previousType = randomType;
 
+    // If two pistols have been drawn, restart the loop until a medium weapon is drawn
+    if (currentPoints === 2 && previousType === 1) {
+      continue;
+    }
+
+    // If the current number of points is less than the number that was randomly generated, restart the while loop
     if (currentPoints < randomType) {
       continue;
     }
 
+    // Get the weapon
     getWeapon(randomType);
+    // Subtract the random weapon points from the current amount of points
     currentPoints -= randomType;
-    console.log(currentPoints);
   }
 }
 
