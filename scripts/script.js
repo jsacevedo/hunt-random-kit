@@ -277,22 +277,40 @@ function getRandomItem(itemArray) {
 }
 
 // Display the weapon based on the random number
-function getWeapon(size) {
+function getWeapon(size, history) {
   if (size === 1) {
+    const smallWeapon =
+      huntData.weapons.small[getRandomItem(huntData.weapons.small)].name;
+
     kitContainer.innerHTML += `<div>
         <h2>Small Weapon</h2>
-        ${huntData.weapons.small[getRandomItem(huntData.weapons.small)].name}
+        ${smallWeapon}
       </div>`;
+
+    console.log(smallWeapon);
+    history.push(smallWeapon);
   } else if (size === 2) {
+    const mediumWeapon =
+      huntData.weapons.medium[getRandomItem(huntData.weapons.medium)].name;
+
     kitContainer.innerHTML += `<div>
         <h2>Medium Weapon</h2>
-        ${huntData.weapons.medium[getRandomItem(huntData.weapons.medium)].name}
+        ${mediumWeapon}
       </div>`;
+
+    console.log(mediumWeapon);
+    history.push(mediumWeapon);
   } else if (size === 3) {
+    const largeWeapon =
+      huntData.weapons.large[getRandomItem(huntData.weapons.large)].name;
+
     kitContainer.innerHTML += `<div>
         <h2>Large Weapon</h2>
-        ${huntData.weapons.large[getRandomItem(huntData.weapons.large)].name}
+        ${largeWeapon}
       </div>`;
+
+    console.log(largeWeapon);
+    history.push(largeWeapon);
   }
 }
 
@@ -310,17 +328,18 @@ function getWeapons() {
   let randomType = 0;
   // Initialize variable to track the previously drawn weapon type
   let previousType = 0;
+  // Initialize counter variable for history array
+  let counter = 0;
+  let history = [];
 
   while (currentPoints > 0) {
     // Get a random number from 1 - 3 to choose the type
     // 1 - Small Weapon, 2 - Medium Weapon, 3 - Large Weapon
     randomType = Math.ceil(Math.random() * weaponTypes);
+    console.log(`------MAIN LOOP COUNT = ${counter} ------`);
+    console.log('Initial Type: ' + randomType);
     previousType = randomType;
-
-    // If two pistols have been drawn, restart the loop until a medium weapon is drawn
-    if (currentPoints === 2 && previousType === 1) {
-      continue;
-    }
+    console.log('Previous Type: ' + previousType);
 
     // If the current number of points is less than the number that was randomly generated, restart the while loop
     if (currentPoints < randomType) {
@@ -328,9 +347,29 @@ function getWeapons() {
     }
 
     // Get the weapon
-    getWeapon(randomType);
+    getWeapon(randomType, history);
     // Subtract the random weapon points from the current amount of points
     currentPoints -= randomType;
+    console.log('Current Points: ' + currentPoints);
+
+    if (previousType === 1 && currentPoints >= 1) {
+      console.log('Previous was a pistol');
+      kitContainer.innerHTML += `<div>
+        <h2>Small Weapon</h2>
+        ${history[counter]}
+      </div>`;
+      history.push(history[counter]);
+      currentPoints -= previousType;
+      counter++;
+      console.log(history);
+      console.log('Current Points: ' + currentPoints);
+    }
+
+    // Increment counter for history
+    counter++;
+
+    console.log(history);
+    console.log('Counter: ' + counter);
   }
 }
 
